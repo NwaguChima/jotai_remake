@@ -1,15 +1,45 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
 
-interface Atom<AtomType> {
+export interface Atom<AtomType> {
   get: () => AtomType;
   set: (newValue: AtomType) => void;
   subscribe: (callback: (newValue: AtomType) => void) => () => void;
 }
 
-export function atom<AtomType>(initialValue: AtomType): Atom<AtomType> {
-  let value = initialValue;
+type AtomGetter<AtomType> = (
+  get: <Target>(a: Atom<Target>) => Target
+) => AtomType;
+
+export function atom<AtomType>(
+  initialValue: AtomType | AtomGetter<AtomType>
+): Atom<AtomType> {
+  let value =
+    typeof initialValue === 'function' ? (null as AtomType) : initialValue;
 
   const subscribers = new Set<(newValue: AtomType) => void>();
+
+  function get<Target>(atom: Atom<Target>) {
+    let currentValue = atom.get();
+
+    atom.subscribe((newValue) => {
+      if (newValue === currentValue) return;
+
+      currentValue = newValue;
+      computeValue();
+      subscribers.forEach((callback) => callback(value));
+    });
+
+    return currentValue;
+  }
+
+  function computeValue() {
+    value =
+      typeof initialValue === 'function'
+        ? (initialValue as AtomGetter<AtomType>)(get)
+        : initialValue;
+  }
+
+  computeValue();
 
   return {
     get: () => value,
