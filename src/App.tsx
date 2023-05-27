@@ -1,6 +1,7 @@
+import SalaryDisplay from './SalaryDisplay';
 import { atom, useAtom } from './jotai';
 
-const salaryAtom = atom<number>(100_000);
+export const salaryAtom = atom<number>(100_000);
 
 function App() {
   const [salary, setSalary] = useAtom(salaryAtom);
@@ -23,6 +24,8 @@ function App() {
           currency: 'USD',
         }).format(salary as number)}
       </div>
+
+      <SalaryDisplay />
     </div>
   );
 }
