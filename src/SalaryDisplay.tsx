@@ -1,8 +1,9 @@
 import { salaryAtom } from './App';
-import { useAtom } from './jotai';
+import { useAtomValue } from './jotai';
 
 function SalaryDisplay() {
-  const [salary] = useAtom(salaryAtom);
+  //   const [salary] = useAtom(salaryAtom);
+  const salary = useAtomValue(salaryAtom);
 
   return (
     <div>
@@ -10,7 +11,7 @@ function SalaryDisplay() {
       {new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
-      }).format(salary as number)}
+      }).format(salary)}
     </div>
   );
 }

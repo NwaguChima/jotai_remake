@@ -42,3 +42,7 @@ export function useAtom<AtomType>(atom: Atom<AtomType>) {
 
   return [useSyncExternalStore(atom.subscribe, atom.get), atom.set];
 }
+
+export function useAtomValue<AtomType>(atom: Atom<AtomType>) {
+  return useSyncExternalStore(atom.subscribe, atom.get);
+}
