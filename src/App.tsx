@@ -5,12 +5,15 @@ export const salaryAtom = atom<number>(100_000);
 export const bonusAtom = atom<number>(15_000);
 const totalSalaryAtom = atom((get) => get(salaryAtom) + get(bonusAtom));
 
+const dataAton = atom(() => fetch('/data.json').then((res) => res.json()));
+const keysAtom = atom((get) => Object.keys(get(dataAton) ?? {}));
+
 function App() {
   const [salary, setSalary] = useAtom(salaryAtom);
   const [bonus, setBonus] = useAtom(bonusAtom);
   const totalSalary = useAtomValue(totalSalaryAtom);
-
-  console.log('Total Salary', totalSalary);
+  const data = useAtomValue(dataAton);
+  const keys = useAtomValue(keysAtom);
 
   return (
     <div>
@@ -76,6 +79,9 @@ function App() {
           currency: 'USD',
         }).format(totalSalary as number)}
       </div>
+
+      <div>Data: {JSON.stringify(data)}</div>
+      <div>Data: {JSON.stringify(keys)}</div>
     </div>
   );
 }
